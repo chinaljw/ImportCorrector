@@ -10,45 +10,54 @@ import ArgumentParser
 
 protocol CorrectCommand {
     
-    var commonOptions: CorrectImport.CommonOptions { get }
+    var commonOptions: CorrectImport.CommonImportCorrectOptions { get }
 }
 
 extension CorrectCommand {
     
     func run(flow: @autoclosure () -> CorrectFlow) throws {
         var flow = flow()
-        flow.testMode = self.commonOptions.testMode
-        flow.log = self.commonOptions.log
+        flow.testMode = self.commonOptions.common.testMode
+        flow.log = self.commonOptions.common.log
         try flow.run()
     }
 }
 
 struct CorrectImport: ParsableCommand {
     
-    static var configuration: CommandConfiguration = .init(commandName: "correctimport",
-                                                           abstract: "Correct import way",
+    static var configuration: CommandConfiguration = .init(commandName: "correct-import",
+                                                           abstract: "Correct import and Podfile",
                                                            version: "1.0.0",
                                                            subcommands: [
                                                             ProjectDir.self,
                                                             SpecificDir.self,
                                                             PodDir.self,
+                                                            CorrectPodfile.self,
                                                            ],
-                                                           defaultSubcommand: ProjectDir.self,
+                                                           defaultSubcommand: nil,
                                                            helpNames: .shortAndLong)
 }
 
+struct CommonOptions: ParsableArguments {
+    
+    @Flag(name: .shortAndLong, help: "testMode")
+    var testMode: Bool = false
+    
+    @Flag(name: .shortAndLong, help: "log")
+    var log: Bool = false
+}
+
+
+
 extension CorrectImport {
     
-    struct CommonOptions: ParsableArguments {
+    struct CommonImportCorrectOptions: ParsableArguments {
         
         @Option(name: .shortAndLong, parsing: .upToNextOption, help: "excludedDirs")
         var excludedDirs: [String] = []
         
-        @Flag(name: .shortAndLong, help: "testMode")
-        var testMode: Bool = false
-        
-        @Flag(name: .shortAndLong, help: "log")
-        var log: Bool = false
+        @OptionGroup
+        var common: CommonOptions
         
         @Option(name: .long, parsing: .upToNextOption, help: "excludeTables")
         var excludeTables: [String] = []
@@ -64,7 +73,7 @@ extension CorrectImport {
         var path: String
         
         @OptionGroup
-        var commonOptions: CommonOptions
+        var commonOptions: CommonImportCorrectOptions
         
         @Option(name: .shortAndLong, parsing: .upToNextOption, help: "headersDir")
         var headersDirs: [String] = []
@@ -94,7 +103,7 @@ extension CorrectImport {
         var headersDirs: [String]
         
         @OptionGroup
-        var commonOptions: CommonOptions
+        var commonOptions: CommonImportCorrectOptions
         
         func run() throws {
             try self.run(flow: .init(specificDirs: self.dirs,
@@ -106,7 +115,7 @@ extension CorrectImport {
     
     struct PodDir: ParsableCommand, CorrectCommand {
         
-        static var configuration: CommandConfiguration = .init(commandName: "podProject",
+        static var configuration: CommandConfiguration = .init(commandName: "pod-project",
                                                                abstract: "Pod project directory",
                                                                helpNames: .shortAndLong)
         
@@ -120,7 +129,7 @@ extension CorrectImport {
         var podName: String?
         
         @OptionGroup
-        var commonOptions: CommonOptions
+        var commonOptions: CommonImportCorrectOptions
         
         func run() throws {
             try self.run(flow: .init(podDir: self.podDir,
@@ -128,6 +137,42 @@ extension CorrectImport {
                                      exlcudedDirs: self.commonOptions.excludedDirs,
                                      podName: self.podName,
                                      excludeTables: self.commonOptions.excludeTables))
+        }
+    }
+    
+    struct CorrectPodfile: ParsableCommand {
+        
+        static var configuration: CommandConfiguration = .init(commandName: "podfile",
+                                                               abstract: "Correct Podfile",
+                                                               helpNames: .shortAndLong)
+        
+        @Argument(help: "Podfile path")
+        var podfile: String
+        
+        @Option(name: .shortAndLong, parsing: .upToNextOption, help: "DependancePods")
+        var dependancePods: [String]
+        
+        @Option(name: .shortAndLong, help: "Main Target Name")
+        var mainTargetName: String
+        
+        @Option(name: .shortAndLong, help: "Build output file path")
+        var buildOutput: String
+        
+        @Option(name: .shortAndLong, help: "Output file path")
+        var output: String
+        
+        @OptionGroup
+        var commonOptions: CommonOptions
+        
+        func run() throws {
+            try PodfileCorrector(dependancePods: dependancePods,
+                                 podfile: podfile,
+                                 mainTargetName: mainTargetName,
+                                 output: output,
+                                 buildOutput: buildOutput,
+                                 testMode: self.commonOptions.testMode,
+                                 log: self.commonOptions.log)
+            .correct()
         }
     }
 }

@@ -1,3 +1,3 @@
 import Foundation
 
-//CorrectImport.main()
+CorrectImport.main()

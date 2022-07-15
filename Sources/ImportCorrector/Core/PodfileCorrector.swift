@@ -125,7 +125,15 @@ extension PodfileCorrector {
 
     func podDefineContent(of defineTable: [String: PodDefine]) -> String {
         var lines = [String]()
-        lines.append("DEFINE_TABLE_START ===============")
+        lines.append("DEFINE_LIST_START ===============")
+        
+        lines.append("")
+        lines.append(self.mainTargetName + " - START")
+        defineTable.keys.forEach { key in
+            lines.append(key)
+        }
+        lines.append(self.mainTargetName + " - END")
+        
         lines.append("")
         defineTable.values.forEach { podDefine in
             lines.append("def \(podDefine.defineName)")
@@ -135,7 +143,7 @@ extension PodfileCorrector {
             lines.append("end")
             lines.append("")
         }
-        lines.append("DEFINE_TABLE_END ===============")
+        lines.append("DEFINE_LIST_END ===============")
         lines.append("")
         lines.append("")
         lines.append("")
@@ -261,7 +269,7 @@ extension PodfileCorrector {
         targetPodTable.forEach { key, pods in
             lines.append(key + " {")
             pods.forEach { line in
-                lines.append("\t" + line)
+                lines.append(line)
             }
             lines.append("}")
             lines.append("")
