@@ -36,7 +36,7 @@ protocol PathFilter {
 struct PodsFilter: PathFilter {
     
     func shouldSkip(for pathInfo: PathInfo) -> Bool {
-        return pathInfo.path.hasPrefix("Pods")
+        return pathInfo.path.contains("Pods")
     }
 }
 
