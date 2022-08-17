@@ -147,7 +147,13 @@ extension PodfileCorrector {
 
     func defineName(of pod: String) -> String {
         let modules = pod.split(separator: "/").map({ String($0) })
-        return (modules.first ?? pod).lowercased() + "_pods"
+        let defineName: String
+        if modules.count <= 1 {
+            defineName = pod
+        } else {
+            defineName = self.dependancePods.contains(modules[0]) ? modules[1] : modules[0]
+        }
+        return defineName.lowercased() + "_pods"
     }
 
 

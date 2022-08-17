@@ -76,7 +76,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "project /Users/xmly/Desktop/XMDisney-Modulization"
+            argument = "project /Users/xmly/Desktop/XMDisney"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
@@ -92,7 +92,7 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "podfile /Users/xmly/Desktop/XMDisney-Modulization/Podfile"
+            argument = "podfile /Users/xmly/Desktop/XMDisney/Podfile"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
@@ -104,7 +104,7 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-b /Users/xmly/Desktop/Temp/Build\ XMDisney_2022-07-18T17-51-38.txt"
+            argument = "-b /Users/xmly/Desktop/Temp/Build\ XMDisney_2022-07-22T15-30-10.txt"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
